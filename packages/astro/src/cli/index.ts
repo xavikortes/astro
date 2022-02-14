@@ -13,6 +13,7 @@ import devServer from '../core/dev/index.js';
 import preview from '../core/preview/index.js';
 import { check } from './check.js';
 import { formatConfigError, loadConfig } from '../core/config.js';
+import { applyIntegrations, loadIntegrations } from '../integrations/index.js';
 
 type Arguments = yargs.Arguments;
 type CLICommand = 'help' | 'version' | 'dev' | 'build' | 'preview' | 'reload' | 'check';
@@ -97,6 +98,9 @@ export async function cli(args: string[]) {
 		throwAndExit(err);
 		return;
 	}
+
+	const int = await loadIntegrations(config);
+	await applyIntegrations(config, int);
 
 	switch (cmd) {
 		case 'dev': {
